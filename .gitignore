@@ -1,3 +1,7 @@
 dataset_local/
 dataset_4_letras_prueba/
 .vscode/
+# Ignorar datasets y modelos pesados
+*.zip
+*.h5
+*.keras
