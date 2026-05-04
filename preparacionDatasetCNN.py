@@ -1,3 +1,10 @@
+'''
+  Este código prepara un dataset de secuencias de palabras de 4 letras para entrenamiento de una CNN.
+  Toma imágenes de letras individuales del dataset ASL Alphabet, las mezcla con una superposición
+  y las utiliza para crear secuencias de palabras, y guarda las imágenes resultantes en una nueva carpeta organizada por palabra.
+'''
+
+
 import os
 import random
 import cv2
