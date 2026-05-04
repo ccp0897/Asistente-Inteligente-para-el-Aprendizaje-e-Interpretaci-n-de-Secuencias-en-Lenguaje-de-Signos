@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNN Image Processor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; align-items: flex-start; gap: 30px; max-width: 800px; }
+        
+        /* Centro: Lógica de Imagen */
+        .image-center { display: flex; flex-direction: column; align-items: center; text-align: center; width: 300px; }
+        .drop-zone { border: 2px dashed #007bff; padding: 20px; border-radius: 15px; background: #f8fbff; width: 100%; box-sizing: border-box; }
+        #preview { width: 100%; border-radius: 10px; margin-top: 15px; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* Derecha: Botones */
+        .side-buttons { display: none; flex-direction: column; gap: 15px; padding-top: 50px; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; transition: transform 0.2s, background 0.3s; }
+        button:active { transform: scale(0.95); }
+        .btn-v1 { background-color: #6c5ce7; }
+        .btn-v2 { background-color: #00b894; }
+        
+        /* Mensajes */
+        #error-msg { color: #d63031; font-size: 0.9rem; margin-top: 10px; display: none; font-weight: bold; }
+        #result-display { margin-top: 20px; padding: 15px; background: #eef2f3; border-radius: 10px; border-left: 5px solid #007bff; width: 100%; text-align: left; display: none; font-style: italic; color: #2d3436; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="image-center">
+        <div class="drop-zone">
+            <strong>Sube tu imagen</strong>
+            <p style="font-size: 0.8rem; color: #666;">(Solo formato .jpg)</p>
+            <input type="file" id="fileInput" accept=".jpg, .jpeg" style="margin-top: 10px;">
+            <p id="error-msg">⚠️ Error: Solo se permiten archivos .jpg</p>
+        </div>
+        
+        <img id="preview" src="" alt="Vista previa">
+        
+        <div id="result-display"></div>
+    </div>
+
+    <div class="side-buttons" id="sideButtons">
+        <button class="btn-v1" onclick="processRNN(1)">Prueba Versión 1</button>
+        <button class="btn-v2" onclick="processRNN(2)">Prueba Versión 2</button>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const errorMsg = document.getElementById('error-msg');
+    const sideButtons = document.getElementById('sideButtons');
+    const resultDisplay = document.getElementById('result-display');
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        resultDisplay.style.display = 'none'; // Limpiar resultado previo
+
+        if (file) {
+            const fileName = file.name.toLowerCase();
+            // Validación de extensión
+            if (!(fileName.endsWith('.jpg'))) {
+                errorMsg.style.display = 'block';
+                sideButtons.style.display = 'none';
+                preview.style.display = 'none';
+                this.value = ""; // Reset input
+            } else {
+                errorMsg.style.display = 'none';
+                sideButtons.style.display = 'flex';
+                
+                // Mostrar preview
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+
+    async function processRNN(version) {
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+        formData.append('version', version);
+
+        resultDisplay.style.display = 'block';
+        resultDisplay.innerText = "🧠 Procesando RNN...";
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.status === "success") {
+                resultDisplay.innerText = data.resultado;
+            } else {
+                resultDisplay.innerText = "❌ Error: " + data.error;
+            }
+        } catch (err) {
+            resultDisplay.innerText = "❌ No se pudo conectar con la API local.";
+        }
+    }
+</script>
+
+</body>
+</html>
