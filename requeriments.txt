@@ -1,0 +1,11 @@
+# ==========================================
+# REQUISITOS DEL MODELO DE IA (INFERENCIA) PARA USO DE GPU
+# ==========================================
+tensorflow==2.15.0
+numpy==1.26.4
+
+# ==========================================
+# TRATAMIENTO DE IMÁGENES
+# ==========================================
+opencv-python-headless==4.9.0.80
+Pillow==10.2.0

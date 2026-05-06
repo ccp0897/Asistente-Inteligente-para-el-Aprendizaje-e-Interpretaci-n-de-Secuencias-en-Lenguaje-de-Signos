@@ -1,4 +1,6 @@
 '''
+  Autores: Cristian Cabrera y Álex Rafael de la Cruz
+  Descripción:
   Este código prepara un dataset de secuencias de palabras de 3, 4 y 5 letras para entrenamiento de una CRNN.
   Toma imágenes de letras individuales del dataset ASL Alphabet, las mezcla con una superposición
   y las utiliza para crear secuencias de palabras, pegándolas en un lienzo universal de 620x128 (con padding negro a la derecha).
